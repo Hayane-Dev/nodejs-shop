@@ -14,8 +14,23 @@ const server = http.createServer((req, res) => {
     }
 
     if (url === '/message' && method === 'POST') {
-        fs.writeFileSync('message.txt', 'DUMMY');
-        // Le code de statut de réponse de redirection 302 Found indique que la ressource est temporairement déplacée vers l'URL contenue dans l'en-tête Location
+        // Listen data event  (chunk, bus of data...)
+        const body = [];
+
+        // Listener
+        req.on('data', (chunk) => {
+            console.log(chunk);
+            body.push(chunk);
+        });
+        req.on('end', () => {
+            const parseBody = Buffer.concat(body).toString();
+            // console.log(parseBody);
+            // parseBody -> key=value -> message=valeur entrée dans l'input (cf name de l'input...)
+            const message = parseBody.split('=')[1];
+            fs.writeFileSync('message.txt', message);
+        });
+
+        // fs.writeFileSync('message.txt', 'DUMMY');
         res.statusCode = 302;
         res.setHeader('Location', '/');
         return res.end();
