@@ -17,25 +17,26 @@ const server = http.createServer((req, res) => {
         // Listen data event  (chunk, bus of data...)
         const body = [];
 
-        // Listener
+        // Listeners
         req.on('data', (chunk) => {
-            console.log(chunk);
             body.push(chunk);
         });
-        req.on('end', () => {
-            const parseBody = Buffer.concat(body).toString();
-            // console.log(parseBody);
-            // parseBody -> key=value -> message=valeur entrée dans l'input (cf name de l'input...)
-            const message = parseBody.split('=')[1];
-            fs.writeFileSync('message.txt', message);
-        });
 
-        // fs.writeFileSync('message.txt', 'DUMMY');
-        res.statusCode = 302;
-        res.setHeader('Location', '/');
-        return res.end();
+        // This return is very important 
+        // Event Driven Code Execution
+        return req.on('end', () => {
+            const parseBody = Buffer.concat(body).toString();
+            const message = parseBody.split('=')[1];
+
+            fs.writeFileSync('message.txt', message);
+            res.statusCode = 302;
+            res.setHeader('Location', '/');
+            return res.end();
+        });
     }
 
+    // Sans le return au niveau du 2e listener, le code synchrone suivant aurait été atteint !!!
+    // Ne pas oublier les listeners sont stockés dans la pile (Event Loop), le code n'étant pas bloquant on passe à la ligne suivante !
     res.setHeader('Content-Type', 'text/html');
     res.write('<html>');
     res.write('<head><title>First Page</title></head>');
