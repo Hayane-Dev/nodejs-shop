@@ -6,7 +6,8 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/add-product', (req, res, next) => {
+// Filtering requests with get and post verbs
+app.get('/add-product', (req, res, next) => {
     res.send(`
         <h1>Add product page</h1>
         <form action="/product" method="POST">
@@ -15,8 +16,7 @@ app.use('/add-product', (req, res, next) => {
     `);
 });
 
-
-app.use('/product', (req, res, next) => {
+app.post('/product', (req, res, next) => {
     console.log(req.body);
     res.redirect('/');
 });
