@@ -1,9 +1,14 @@
+const path = require('path');
 const express = require('express');
+
 const router = express.Router();
 
 // Warning: exact matching... with use an url like /dsfdsf works but with get it does not work !!!
 router.get('/', (req, res, next) => {
-    res.send('<h1>Hello from Express.js</h1>');
+    // Does not work ... relative path
+    // res.sendFile('./views/shop.html');
+    // Each argument is a part of the absolute path
+    res.sendFile(path.join(__dirname, '../', 'views', 'shop.html'));
 });
 
 module.exports = router;
