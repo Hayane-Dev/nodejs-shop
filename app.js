@@ -1,23 +1,27 @@
 const http = require('http');
-
 const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
 
-// All the request url start with '/', so this middleware is alwakys asked
-app.use('/', (req, res, next) => {
-    console.log('This middleware always runs !');
-    next();
-});
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/add-product', (req, res, next) => {
-    console.log('In the middleware');
-    res.send('<h1>Add product page</h1>');
+    res.send(`
+        <h1>Add product page</h1>
+        <form action="/product" method="POST">
+            <input type="text" name="title" value="book"><button type="submit">Send</button>
+        </form>
+    `);
 });
 
-// We have to put it in the end, if not the url /add-product is never reached !
+
+app.use('/product', (req, res, next) => {
+    console.log(req.body);
+    res.redirect('/');
+});
+
 app.use('/', (req, res, next) => {
-    console.log('In another middleware');
     res.send('<h1>Hello from Express.js</h1>');
 });
 
