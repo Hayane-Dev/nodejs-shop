@@ -8,10 +8,11 @@ const shopRoutes = require('./routes/shop');
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
+// folder public -> css (make accessible)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Filtering paths
-app.use('/admin', adminRoutes);
+app.use('/admin', adminRoutes.routes);
 app.use(shopRoutes);
 
 // If no request is intercepted
