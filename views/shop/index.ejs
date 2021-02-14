@@ -22,7 +22,11 @@
                             <p class="product__description"><%= product.description %></p>
                         </div>
                         <div class="card__actions">
-                            <button class="btn">Add to Cart</button>
+                            <!-- /products/0.43432 -->
+                            <a class="btn" href="/products/<%= product.id %>">Details</a>
+                            <form action="/add-to-cart" method="POST">
+                                <button class="btn">Add to Cart</button>
+                            </form>
                         </div>
                     </article>
                 <% } %>
