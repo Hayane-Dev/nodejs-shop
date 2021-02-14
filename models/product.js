@@ -1,4 +1,4 @@
-const { getProducts } = require("../controllers/products");
+const { getProducts } = require("../controllers/admin");
 
 const fs = require('fs');
 const path = require('path');
