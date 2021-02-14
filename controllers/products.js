@@ -14,7 +14,10 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
+    // Error : Cannot read property 'length' of undefined
+    // FetchAll asynchrone function !!! But it returns nothing...
     const products = Product.fetchAll();
+    // This part of code is executed with waiting for the traitement of fetchAll so products in not defined yet
     res.render('shop', {
         pageTitle: 'Shop',
         path: '/',
