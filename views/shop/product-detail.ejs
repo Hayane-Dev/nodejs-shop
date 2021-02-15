@@ -13,8 +13,7 @@
         </div>
         <h2><%= product.price %> €</h2>
         <p><%= product.description %></p>
-        <form action="/add-to-cart" method="POST">
-            <button class="btn">Add to Cart</button>
-        </form>
+        <!-- Not needed to pass parameter product because we are outside of loop -->
+        <%- include('../includes/add-to-cart.ejs') %>
     </main>
 <%- include('../includes/end.ejs') %>

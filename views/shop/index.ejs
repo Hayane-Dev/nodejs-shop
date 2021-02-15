@@ -24,9 +24,8 @@
                         <div class="card__actions">
                             <!-- /products/0.43432 Random id ...-->
                             <a class="btn" href="/products/<%= product.id %>">Details</a>
-                            <form action="/add-to-cart" method="POST">
-                                <button class="btn">Add to Cart</button>
-                            </form>
+                            <!-- We have to pass the variable product, pb of scope regarding the loop line 11 and the fact of including... -->
+                            <%- include('../includes/add-to-cart.ejs', {product: product}) %>
                         </div>
                     </article>
                 <% } %>
