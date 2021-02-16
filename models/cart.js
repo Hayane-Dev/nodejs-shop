@@ -5,8 +5,10 @@ const rootDir = require('../utils/path');
 
 const p = path.join(rootDir, 'data', 'cart.json');
 
+// const Product = require('./product');
+
 // Helper
-const fetchPreviousCart = (cb) => {
+const fetchCart = (cb) => {
     fs.readFile(p, (err, fileContent) => {
         let cart = { products: [], totalPrice: 0 };
         if (!err) {
@@ -20,7 +22,7 @@ module.exports = class Cart {
 
     static addProduct(id, productPrice) {
         // Fetch the previous cart
-        fetchPreviousCart((cart) => {
+        fetchCart((cart) => {
             // Analyze the cart => Find existing product
             const existingProductIndex = cart.products.findIndex(prod => prod.id === id);
             const existingProduct = cart.products[existingProductIndex];
@@ -42,5 +44,21 @@ module.exports = class Cart {
             });
         })
 
+    }
+
+    static deleteProduct(id, productPrice) {
+        fetchCart((cart) => {
+            const updatedCart = {...cart };
+            const productInCart = updatedCart.products.find(i => i.id === id);
+            if (!productInCart) {
+                return 'The product is not in the cart';
+            }
+            const amount = productInCart.qty * productPrice;
+            updatedCart.totalPrice = updatedCart.totalPrice - amount;
+            updatedCart.products = updatedCart.products.filter(i => i.id !== id);
+            fs.writeFile(p, JSON.stringify(updatedCart), (err) => {
+                console.log(err);
+            })
+        });
     }
 }
