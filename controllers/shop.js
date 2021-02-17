@@ -35,10 +35,26 @@ exports.getProduct = (req, res, next) => {
 
 
 exports.getCart = (req, res, next) => {
-    res.render('shop/cart', {
-        pageTitle: 'Cart',
-        path: '/cart',
-    });
+    Cart.getCart((cart) => {
+        Product.fetchAll((products) => {
+            const cartProducts = [];
+            for (product of products) {
+                // Checking if the curent product is in the cart (to get other data)
+                const cartProductData = cart.products.find(prod => prod.id === product.id)
+                if (cartProductData) {
+                    cartProducts.push({
+                        productData: product,
+                        qty: cartProductData.qty
+                    })
+                }
+            }
+            res.render('shop/cart', {
+                pageTitle: 'Cart',
+                path: '/cart',
+                products: cartProducts
+            });
+        })
+    })
 };
 
 exports.postCart = (req, res, next) => {
