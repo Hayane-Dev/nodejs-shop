@@ -29,13 +29,23 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
     const prodId = req.params.productId;
-    Product.findById(prodId)
-        .then(([rows, fieldData]) => {
-            console.log('product', rows);
+    // Other way todo
+    // Product.findAll({ where: { id: prodId } })
+    //     .then(products => {
+    //         res.render('shop/product-detail', {
+    //             pageTitle: products[0].title,
+    //             path: '/products',
+    //             product: products[0]
+    //         });
+    //     })
+    //     .catch(err => console.log(err));
+    // Sequelize method old method findById...now findByPk
+    Product.findByPk(prodId)
+        .then(product => {
             res.render('shop/product-detail', {
-                pageTitle: 'Product Detail',
+                pageTitle: product.title,
                 path: '/products',
-                product: rows[0]
+                product: product
             });
         })
         .catch(err => console.log(err));
