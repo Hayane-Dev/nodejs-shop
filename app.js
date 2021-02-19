@@ -7,6 +7,11 @@ const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/error');
 const sequelize = require('./utils/database');
 
+// In order to build associations
+const User = require("./models/user");
+const Product = require("./models/product");
+
+const port = 3000;
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -23,13 +28,16 @@ app.use(shopRoutes);
 // If no request is intercepted
 app.use(errorController.get404);
 
+// Associations
+Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+User.hasMany(Product);
+
 // Call Sequelize ... Creating tables if needed...there is a check...
 sequelize
-    .sync()
-    .then(result => {
-        // console.log(result);
-        app.listen(3000, () => {
-            console.log("MelShop, Server start on port 3000");
+    .sync({ force: true }) // Force la destruction des tables et la recréation de celles-ci avec les modifs relatives aux associations
+    .then(() => {
+        app.listen(port, () => {
+            console.log("MelShop, Server start on port: " + port + "\n");
         });
     })
     .catch(err => {
