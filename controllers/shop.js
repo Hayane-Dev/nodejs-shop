@@ -2,12 +2,13 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 exports.getIndex = (req, res, next) => {
-    Product.fetchAll()
-        .then(([rows, fieldData]) => {
+    // Sequelize method findAll
+    Product.findAll()
+        .then(products => {
             res.render('shop/index', {
                 pageTitle: 'Index',
                 path: '/',
-                prods: rows
+                prods: products
             });
         })
         .catch(err => console.log(err));
@@ -15,12 +16,12 @@ exports.getIndex = (req, res, next) => {
 
 // For the time being, this is the same code as the above function
 exports.getProducts = (req, res, next) => {
-    Product.fetchAll()
-        .then(([rows, fieldData]) => {
+    Product.findAll()
+        .then(products => {
             res.render('shop/product-list', {
                 pageTitle: 'Products',
                 path: '/products',
-                prods: rows
+                prods: products
             });
         })
         .catch(err => console.log(err));
