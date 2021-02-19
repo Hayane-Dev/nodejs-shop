@@ -17,12 +17,12 @@ exports.postAddProduct = (req, res, next) => {
             description: description
         })
         .then(result => {
-            console.log(result);
+            console.log('Created Product');
+            res.redirect('/admin/products');
         })
         .catch(err => console.log(err));
 };
 
-// http://localhost:3000/admin/edit-product/1234?edit=true (manually to test !!!)
 exports.getEditProduct = (req, res, next) => {
     const editMode = req.query.edit;
     if (!editMode) {
@@ -77,7 +77,13 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
-    // console.log('prodId: ', prodId);
-    Product.deleteById(prodId);
-    res.redirect('/admin/products');
+    Product.findByPk(prodId)
+        .then(product => {
+            return product.destroy();
+        })
+        .then(() => {
+            console.log('Destroyed Product');
+            res.redirect('/admin/products');
+        })
+        .catch(err => console.log(err));
 };
