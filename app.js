@@ -56,7 +56,7 @@ Product.belongsToMany(Cart, { through: CartItem });
 // Call Sequelize ... Creating tables if needed...there is a check...
 // First lines executed...before the middlewares
 sequelize
-    .sync({ force: true })
+    .sync()
     .then(() => {
         return User.findByPk(1);
     })
@@ -67,7 +67,12 @@ sequelize
         return user;
     })
     .then((user) => {
-        console.log('user:', user);
+        // console.log('user:', user);
+        // Creating the cart, magic method
+        return user.createCart();
+    })
+    .then(cart => {
+        console.log('cart:', cart);
         app.listen(port, () => {
             console.log("MelShop, Server start on port: " + port + "\n");
         });
