@@ -11,7 +11,9 @@ const sequelize = require('./utils/database');
 const User = require("./models/user");
 const Product = require("./models/product");
 const Cart = require("./models/cart");
+const Order = require("./models/order");
 const CartItem = require("./models/cart-item");
+const OrderItem = require("./models/order-item");
 
 const port = 3000;
 const app = express();
@@ -52,11 +54,15 @@ Cart.belongsTo(User);
 // Cart/Product
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
+// Order
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, { through: OrderItem })
 
 // Call Sequelize ... Creating tables if needed...there is a check...
 // First lines executed...before the middlewares
 sequelize
-    .sync()
+    .sync({ force: true })
     .then(() => {
         return User.findByPk(1);
     })
