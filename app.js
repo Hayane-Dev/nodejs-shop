@@ -72,7 +72,7 @@ sequelize
         return user.createCart();
     })
     .then(cart => {
-        console.log('cart:', cart);
+        // console.log('cart:', cart);
         app.listen(port, () => {
             console.log("MelShop, Server start on port: " + port + "\n");
         });

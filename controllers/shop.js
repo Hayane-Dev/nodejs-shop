@@ -46,7 +46,7 @@ exports.getCart = (req, res, next) => {
     req.user
         .getCart()
         .then(cart => {
-            console.log('cart:', cart);
+            // console.log('cart:', cart);
             return cart
                 .getProducts() // Magic method
                 .then(products => {
@@ -71,6 +71,7 @@ exports.postCart = (req, res, next) => {
     req.user
         .getCart()
         .then(cart => {
+            // console.log('cart:', cart);
             fetchedCart = cart;
             return cart.getProducts({ where: { id: prodId } }); // Magic method
         })
@@ -81,11 +82,16 @@ exports.postCart = (req, res, next) => {
             }
             let newQuantity = 1;
             if (product) {
-                // Later
+                const oldQuantity = product.cartItem.quantity;
+                newQuantity = oldQuantity + 1;
+                return fetchedCart.addProduct(product, { // Magic method
+                    through: { quantity: newQuantity } // Setting additional fields 
+                });
             }
             return Product
                 .findByPk(prodId)
                 .then(product => {
+                    // console.log('p in cart', product);
                     return fetchedCart.addProduct(product, { // Magic method
                         through: { quantity: newQuantity } // Setting additional fields 
                     });
