@@ -34,8 +34,18 @@ User.hasMany(Product);
 
 // Call Sequelize ... Creating tables if needed...there is a check...
 sequelize
-    .sync({ force: true }) // Force la destruction des tables et la recréation de celles-ci avec les modifs relatives aux associations
+    .sync()
     .then(() => {
+        return User.findByPk(1);
+    })
+    .then(user => {
+        if (!user) {
+            return User.create({ name: 'Mel', email: 'test@test.com', password: '*****' })
+        }
+        return user;
+    })
+    .then((user) => {
+        console.log('user:', user);
         app.listen(port, () => {
             console.log("MelShop, Server start on port: " + port + "\n");
         });
