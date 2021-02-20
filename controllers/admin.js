@@ -10,12 +10,12 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
     const { title, imageUrl, price, description } = req.body;
-    Product.create({
+    // Magic method User.createProduct()
+    req.user.createProduct({
             title: title,
             imageUrl: imageUrl,
             price: price,
             description: description,
-            userId: req.user.id
         })
         .then(result => {
             console.log('Created Product');

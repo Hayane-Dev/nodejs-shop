@@ -26,6 +26,7 @@ app.use((req, res, next) => {
     User
         .findByPk(1)
         .then(user => {
+            // Sequelize object (User object...!!!) with all the methods...magic 
             req.user = user;
             next();
         })
