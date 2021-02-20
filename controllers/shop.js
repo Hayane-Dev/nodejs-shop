@@ -67,11 +67,40 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId;
-    // console.log(prodId);
-    Product.findById(prodId, (product) => {
-        Cart.addProduct(prodId, product.price);
-        res.redirect('/cart');
-    });
+    let fetchedCart; // Pb of scope !!!
+    req.user
+        .getCart()
+        .then(cart => {
+            fetchedCart = cart;
+            return cart.getProducts({ where: { id: prodId } }); // Magic method
+        })
+        .then(products => {
+            let product;
+            if (products.length > 0) {
+                product = products[0];
+            }
+            let newQuantity = 1;
+            if (product) {
+                // Later
+            }
+            return Product
+                .findByPk(prodId)
+                .then(product => {
+                    return fetchedCart.addProduct(product, { // Magic method
+                        through: { quantity: newQuantity } // Setting additional fields 
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        })
+        .then(() => {
+            res.redirect('/cart');
+        })
+        .catch(err => {
+            console.log(err);
+        });
+
 };
 
 exports.postCartDeleteItem = (req, res, next) => {
