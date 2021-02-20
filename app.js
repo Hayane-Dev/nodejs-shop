@@ -21,6 +21,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // folder public -> css (make accessible)
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Storing the user into the request in order to share it
+app.use((req, res, next) => {
+    User
+        .findByPk(1)
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(err => console.log(err));
+});
+
 // Filtering paths
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -33,6 +44,7 @@ Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Product);
 
 // Call Sequelize ... Creating tables if needed...there is a check...
+// First lines executed...before the middlewares
 sequelize
     .sync()
     .then(() => {
