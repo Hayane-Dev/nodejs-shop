@@ -18,7 +18,9 @@ exports.postAddProduct = (req, res, next) => {
         title: title,
         price: price,
         description: description,
-        imageUrl: imageUrl
+        imageUrl: imageUrl,
+        userId: req.user._id
+            // userId: req.user suffit Mongoose extirpe l'id !!!
     });
     // The method save continue to work but now it's a mongoose method (provided by mongoose)
     product.save()
