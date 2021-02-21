@@ -3,8 +3,8 @@ const Cart = require('../models/cart');
 const Order = require('../models/order');
 
 exports.getIndex = (req, res, next) => {
-    // Sequelize method findAll
-    Product.findAll()
+    // Mongoose method
+    Product.find()
         .then(products => {
             res.render('shop/index', {
                 pageTitle: 'Index',
@@ -17,7 +17,7 @@ exports.getIndex = (req, res, next) => {
 
 // For the time being, this is the same code as the above function
 exports.getProducts = (req, res, next) => {
-    Product.findAll()
+    Product.find()
         .then(products => {
             res.render('shop/product-list', {
                 pageTitle: 'Products',
