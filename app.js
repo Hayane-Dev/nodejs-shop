@@ -27,7 +27,10 @@ app.use(shopRoutes);
 app.use(errorController.get404);
 
 mongoose
-    .connect('mongodb+srv://mek:mekibnmek@cluster0.akhve.mongodb.net/test')
+    .connect('mongodb+srv://mek:mekibnmek@cluster0.akhve.mongodb.net/melShop', {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
     .then(result => {
         app.listen(port, () => {
             console.log("MelShop, Server start on port: " + port + "\n");
