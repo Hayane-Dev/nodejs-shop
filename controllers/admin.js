@@ -76,7 +76,11 @@ exports.postEditProduct = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
     // Mongoose function
     Product.find()
+        // .populate('userId') // fetching relations data (all)
+        // .select('title price -_id') // Just the title and price without the _id 
+        // .populate('userId', 'name -_id') // Just the name
         .then(products => {
+            console.log(products);
             res.render('admin/products', {
                 pageTitle: 'Admin Products',
                 path: '/admin/products',
