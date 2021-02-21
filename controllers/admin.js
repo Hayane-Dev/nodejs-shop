@@ -9,19 +9,30 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-    const { title, imageUrl, price, description } = req.body;
-    // Magic method User.createProduct()
-    req.user.createProduct({
-            title: title,
-            imageUrl: imageUrl,
-            price: price,
-            description: description,
-        })
-        .then(result => {
-            console.log('Created Product');
+    const title = req.body.title;
+    const price = req.body.price;
+    const description = req.body.description;
+    const imageUrl = req.body.imageUrl;
+    // const product = new Product(title, imageUrl, price, description, null, req.user._id);
+    // With mongoose we have to pass a javascript object
+    const product = new Product({
+        title: title,
+        price: price,
+        description: description,
+        imageUrl: imageUrl,
+        // userId: req.user._id
+        // Mongoose knows that it just have to store e reference of the user
+        userId: req.user
+    });
+    // The method save continue to work but now it's a mongoose method (provided by mongoose)
+    product.save()
+        .then(() => {
+            console.log("Product Created");
             res.redirect('/admin/products');
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            console.log(err);
+        });
 };
 
 exports.getEditProduct = (req, res, next) => {
