@@ -45,13 +45,14 @@ exports.getProduct = (req, res, next) => {
 exports.getCart = (req, res, next) => {
     req.user
         .populate('cart.items.productId')
-        .execPopulate() //req.user.populate(...).then is not a function
+        .execPopulate() //return a promise to avoid error: req.user.populate(...).then is not a function
         .then(user => {
-            console.log(user.cart);
+            console.log(user.cart.items);
+            const products = user.cart.items;
             res.render('shop/cart', {
                 pageTitle: 'Cart',
                 path: '/cart',
-                products: user.cart.items
+                products: products
             });
         })
         .catch(err => {
