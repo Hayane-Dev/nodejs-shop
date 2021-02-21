@@ -43,23 +43,16 @@ exports.getProduct = (req, res, next) => {
 
 
 exports.getCart = (req, res, next) => {
-    // Using magic methods
     req.user
-        .getCart()
-        .then(cart => {
-            // console.log('cart:', cart);
-            return cart
-                .getProducts() // Magic method
-                .then(products => {
-                    res.render('shop/cart', {
-                        pageTitle: 'Cart',
-                        path: '/cart',
-                        products: products
-                    });
-                })
-                .catch(err => {
-                    console.log(err);
-                })
+        .populate('cart.items.productId')
+        .execPopulate() //req.user.populate(...).then is not a function
+        .then(user => {
+            console.log(user.cart);
+            res.render('shop/cart', {
+                pageTitle: 'Cart',
+                path: '/cart',
+                products: user.cart.items
+            });
         })
         .catch(err => {
             console.log(err);
@@ -68,32 +61,9 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId;
-    let fetchedCart; // Pb of scope !!!
-    let newQuantity = 1;
-    req.user
-        .getCart()
-        .then(cart => {
-            fetchedCart = cart;
-            return cart.getProducts({ where: { id: prodId } }); // Magic method
-        })
-        .then(products => {
-            let product;
-            if (products.length > 0) {
-                product = products[0];
-            }
-
-            if (product) {
-                const oldQuantity = product.cartItem.quantity;
-                newQuantity = oldQuantity + 1;
-                return product;
-
-            }
-            return Product.findByPk(prodId)
-        })
+    Product.findById(prodId)
         .then(product => {
-            return fetchedCart.addProduct(product, { // Magic method
-                through: { quantity: newQuantity } // Setting additional fields 
-            });
+            return req.user.addToCart(product);
         })
         .then(() => {
             res.redirect('/cart');
@@ -101,7 +71,6 @@ exports.postCart = (req, res, next) => {
         .catch(err => {
             console.log(err);
         });
-
 };
 
 exports.postCartDeleteItem = (req, res, next) => {
