@@ -37,13 +37,8 @@ exports.getEditProduct = (req, res, next) => {
         return res.redirect('/');
     }
     const prodId = req.params.productId;
-    // Product.findByPk(prodId)
-    req.user
-        .getProducts({ where: { id: prodId } }) // Magic method
-        // .then(product => {
-        .then(products => {
-            // Don't forget getProducts return an array !!!
-            const product = products[0];
+    Product.findById(prodId)
+        .then(product => {
             if (!product) {
                 return res.redirect('/');
             }
@@ -54,13 +49,13 @@ exports.getEditProduct = (req, res, next) => {
                 product: product
             });
         })
-        .catch(err => console.log(error));
+        .catch(err => console.log(err));
 };
 
 exports.postEditProduct = (req, res, next) => {
     const prodId = req.body.productId;
     const { title, imageUrl, price, description } = req.body;
-    Product.findByPk(prodId)
+    Product.findById(prodId)
         .then(product => {
             product.title = title;
             product.imageUrl = imageUrl;
@@ -68,11 +63,11 @@ exports.postEditProduct = (req, res, next) => {
             product.description = description;
             return product.save();
         })
-        .then(result => {
+        .then(() => {
             console.log('Updated Product');
             res.redirect('/admin/products');
         })
-        .catch(err => console.log(error));
+        .catch(err => console.log(err));
 
 };
 
