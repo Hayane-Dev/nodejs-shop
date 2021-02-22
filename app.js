@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware for storing an user
 app.use((req, res, next) => {
-    User.findById('6032b58aed15f020acad063f')
+    User.findById('60336646a9ffba4714a59d83')
         .then(user => {
             req.user = user; // Full user object Mongoose
             next();

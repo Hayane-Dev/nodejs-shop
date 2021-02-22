@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 const Order = require('../models/order');
+const user = require('../models/user');
 
 exports.getIndex = (req, res, next) => {
     // Mongoose method
@@ -92,7 +93,7 @@ exports.postOrder = (req, res, next) => {
         .populate('cart.items.productId')
         .execPopulate()
         .then(user => {
-            console.log(user.cart.items);
+            // console.log(user.cart.items);
             const products = user.cart.items.map(i => {
                 return {
                     quantity: i.quantity,
@@ -108,6 +109,9 @@ exports.postOrder = (req, res, next) => {
                 products: products
             });
             return order.save();
+        })
+        .then(() => {
+            return req.user.clearCart();
         })
         .then(() => {
             res.redirect('/orders');

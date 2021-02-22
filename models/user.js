@@ -17,12 +17,6 @@ const userSchema = new Schema({
             productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
             quantity: { type: Number, required: true }
         }]
-    },
-    order: {
-        items: [{
-            productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
-            quantity: { type: Number, required: true }
-        }]
     }
 });
 
@@ -57,6 +51,13 @@ userSchema.methods.deleteCartItem = function(product) {
     const updatedCart = { items: updatedCartItems };
 
     this.cart = updatedCart;
+
+    return this.save();
+};
+
+userSchema.methods.clearCart = function() {
+
+    this.cart = { items: [] };
 
     return this.save();
 };
