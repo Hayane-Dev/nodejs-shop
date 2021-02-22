@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const adminRoutes = require('./routes/admin')
 const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 const errorController = require('./controllers/error');
 const mongoose = require('mongoose');
 const User = require('./models/user');
@@ -32,6 +33,7 @@ app.use((req, res, next) => {
 // Filtering paths
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use('/auth', authRoutes);
 
 // If no request is intercepted
 app.use(errorController.get404);
