@@ -121,52 +121,15 @@ exports.postOrder = (req, res, next) => {
         });
 };
 
-exports.postOrderOld = (req, res, next) => {
-    let fetchedCart;
-    req.user
-        .getCart()
-        .then(cart => {
-            fetchedCart = cart;
-            return cart.getProducts();
-        })
-        .then((products) => {
-            return req.user
-                .createOrder()
-                .then(order => {
-                    return order.addProducts(products.map(product => {
-                        // orderItem is the same which is passed in the order-item model...lowercase
-                        product.orderItem = { quantity: product.cartItem.quantity };
-                        return product;
-                    }));
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-        })
-        .then(() => {
-            // Resetting the cart (magic method)
-            return fetchedCart.setProducts(null);
-        })
-        .then(() => {
-            res.redirect('/orders');
-        })
-        .catch(err => {
-            console.log(err);
-        });
-};
-
 exports.getOrders = (req, res, next) => {
-    // Magic method sequelize
-    req.user
-        .getOrders({ include: ['products'] })
-        .then(orders => {
-            console.log(orders);
+    Order.find({ 'user.userId': req.user._id })
+        .then((orders => {
             res.render('shop/orders', {
                 pageTitle: 'Orders',
                 path: '/orders',
                 orders: orders
             });
-        })
+        }))
         .catch(err => {
             console.log(err);
         })
