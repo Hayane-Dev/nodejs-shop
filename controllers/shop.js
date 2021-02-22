@@ -92,11 +92,13 @@ exports.postOrder = (req, res, next) => {
         .populate('cart.items.productId')
         .execPopulate()
         .then(user => {
+            console.log(user.cart.items);
             const products = user.cart.items.map(i => {
                 return {
                     quantity: i.quantity,
-                    product: i.productId
-                }
+                    // product: i.productId // PB: give only the id of the product !!! Even if it is supposed to return all the object !!!
+                    product: {...i.productId._doc } // Trick to get all the object
+                };
             });
             const order = new Order({
                 user: {
