@@ -4,12 +4,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 const User = require('./models/user');
 const errorController = require('./controllers/error');
 
 const port = 3000;
+const MONGODB_URI = 'mongodb+srv://mek:mekibnmek@cluster0.akhve.mongodb.net/melShop';
 const app = express();
+const store = new MongoDBStore({
+    uri: MONGODB_URI,
+    collections: 'sessions'
+})
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -23,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 // Initializing the session
 app.use(
-    session({ secret: 'my secret', resave: false, saveUninitialized: false })
+    session({ secret: 'my secret', resave: false, saveUninitialized: false, store: store })
 );
 
 // Middleware for storing an user
@@ -44,7 +50,7 @@ app.use('/auth', authRoutes);
 app.use(errorController.get404);
 
 mongoose
-    .connect('mongodb+srv://mek:mekibnmek@cluster0.akhve.mongodb.net/melShop', {
+    .connect(MONGODB_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
