@@ -49,8 +49,9 @@ exports.getEditProduct = (req, res, next) => {
             res.render('admin/edit-product', {
                 pageTitle: 'Edit Product',
                 path: '/admin/edit-product',
-                editing: true,
-                product: product
+                editing: editMode,
+                product: product,
+                isAuthenticated: req.session.isLoggedIn
             });
         })
         .catch(err => console.log(err));
