@@ -14,7 +14,14 @@ exports.postLogin = (req, res, next) => {
         .then(user => {
             req.session.isLoggedIn = true;
             req.session.user = user;
-            res.redirect('/');
+            // res.redirect('/');
+            // With this code we are not sure that the session is setted before the redirection so...
+            // Adding this function to be sure ...
+            req.session.save(err => {
+                console.log(err);
+                res.redirect('/');
+            })
+
         })
         .catch(err => console.log(err));
 };

@@ -34,9 +34,12 @@ app.use(
 
 // Middleware for storing an user
 app.use((req, res, next) => {
-    User.findById('60336646a9ffba4714a59d83')
+    if (!req.session.user) {
+        return next();
+    }
+    User.findById(req.session.user._id)
         .then(user => {
-            req.user = user; // Full user object Mongoose
+            req.user = user; // Full user object Mongoose => req.session.user is not a full mongoose object (some methods could not be used)
             next();
         })
 });
