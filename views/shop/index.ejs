@@ -18,14 +18,14 @@
                                 alt="<%= product.title %>">
                         </div>
                         <div class="card__content">
-                            <h2 class="product__price"><%= product.price %> €</h2>
+                            <h2 class="product__price">$<%= product.price %></h2>
                             <p class="product__description"><%= product.description %></p>
                         </div>
                         <div class="card__actions">
-                            <!-- /products/0.43432 Random id ...-->
-                            <a class="btn" href="/products/<%= product.id %>">Details</a>
-                            <!-- We have to pass the variable product, pb of scope regarding the loop line 11 and the fact of including... -->
-                            <%- include('../includes/add-to-cart.ejs', {product: product}) %>
+                            <a href="/products/<%= product._id %>" class="btn">Details</a>
+                            <% if (isAuthenticated) { %>
+                                <%- include('../includes/add-to-cart.ejs', {product: product}) %>
+                            <% } %>
                         </div>
                     </article>
                 <% } %>
