@@ -50,6 +50,14 @@ app.use((req, res, next) => {
         .catch(err => console.log(err));
 });
 
+// Instead of adding to each request, it is better to use a middleware
+app.use((req, res, next) => {
+    console.log(req.session.isLoggedIn);
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
