@@ -8,6 +8,9 @@
             <main>
                 <% if (prods.length > 0) { %>
                     <div class="grid">
+                        <% if (errorMessage) { %>
+                            <div class="user-message user-message--error"><%= errorMessage %></div>
+                        <% } %>
                         <% for (let product of prods) { %>
                             <article class="card product-item">
                                 <header class="card__header">

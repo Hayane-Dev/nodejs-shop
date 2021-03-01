@@ -64,20 +64,36 @@ exports.postEditProduct = (req, res, next) => {
 
     Product.findById(prodId)
         .then(product => {
+            // Verify that the user who try to edit is the product owner
+            // if (product.userId !== req.user._id) {
+            // String compare...better
+            if (product.userId.toString() !== req.user._id.toString()) {
+                req.flash('error', 'Something wrong, are you the product owner ???');
+                return res.redirect('/admin/products');
+            }
             product.title = updatedTitle;
             product.price = updatedPrice;
             product.description = updatedDesc;
             product.imageUrl = updatedImageUrl;
-            return product.save();
-        })
-        .then(result => {
-            console.log('UPDATED PRODUCT!');
-            res.redirect('/admin/products');
+            return product.save()
+                .then(() => {
+                    console.log('UPDATED PRODUCT!');
+                    res.redirect('/admin/products');
+                })
+                .catch(err => {
+                    console.log(err);
+                })
         })
         .catch(err => console.log(err));
 };
 
 exports.getProducts = (req, res, next) => {
+    let msg = req.flash('error');
+    if (msg.length > 0) {
+        msg = msg[0];
+    } else {
+        msg = null;
+    }
     Product.find({ userId: req.user._id }) // Only the products owner can modify or delete his products !!!
         // Product.find()
         // .select('title price -_id')
@@ -89,6 +105,7 @@ exports.getProducts = (req, res, next) => {
                 pageTitle: 'Admin Products',
                 path: '/admin/products',
                 // isAuthenticated: req.session.isLoggedIn
+                errorMessage: msg
             });
         })
         .catch(err => console.log(err));
@@ -96,7 +113,9 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
-    Product.findByIdAndRemove(prodId)
+    // Verify that the user who try to edit is the product owner
+    Product.deleteOne({ _id: prodId, userId: req.user._id })
+        // Product.findByIdAndRemove(prodId)
         .then(() => {
             console.log('DESTROYED PRODUCT');
             res.redirect('/admin/products');
