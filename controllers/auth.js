@@ -5,6 +5,7 @@ const crypto = require('crypto');
 
 const User = require('../models/user');
 const { log } = require('console');
+const user = require('../models/user');
 
 const transporter = nodemailer.createTransport(sendgridTransport({
     auth: {
@@ -153,10 +154,11 @@ exports.postReset = (req, res, next) => {
                 transporter.sendMail({
                     to: req.body.email,
                     from: 'melkorchi80@gmail.com',
+                    // from: 'shopMongoDB@gmail.com',
                     subject: 'Password reset',
                     html: `
                         <p>You requested a password reset</p>
-                        <p>Click this <a href="http://localhost:3000/reset/${token}">Link</a>to set a new password</p>
+                        <p>Click this <a href="http://localhost:3000/reset/${token}">Link</a> to set a new password</p>
                     `
                 });
             })
@@ -164,4 +166,65 @@ exports.postReset = (req, res, next) => {
                 console.log(err);
             })
     });
+};
+
+exports.getNewPassword = (req, res, next) => {
+    // Check the token
+    const token = req.params.token;
+    User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+        .then(user => {
+            if (!user) {
+                req.flash('error', 'Invalid token.');
+                return res.redirect('/login');
+            }
+            console.log('user', user);
+            let msg = req.flash('error');
+            if (msg.length > 0) {
+                msg = msg[0];
+            } else {
+                msg = null;
+            }
+            res.render('auth/new-password', {
+                path: '/new-password',
+                pageTitle: 'New Password',
+                errorMessage: msg,
+                userId: user._id.toString(),
+                passwordToken: token
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
+
+exports.postNewPassword = (req, res, next) => {
+    const userId = req.body.userId;
+    const newPassword = req.body.password;
+    const token = req.body.passwordToken;
+    let resetUser;
+    User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() }, _id: userId })
+        .then(user => {
+            resetUser = user;
+            return bcryptjs.hash(newPassword, 12);
+        })
+        .then(hashedPassword => {
+            resetUser.password = hashedPassword;
+            resetUser.resetToken = undefined;
+            resetUser.resetTokenExpiration = undefined;
+            return resetUser.save();
+        })
+        .then(() => {
+            res.redirect('/login');
+            transporter.sendMail({
+                to: req.body.email,
+                from: 'melkorchi80@gmail.com',
+                subject: 'Password reseted',
+                html: `
+                        <p>Your password has been reseted !</p>
+                    `
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        })
 };
