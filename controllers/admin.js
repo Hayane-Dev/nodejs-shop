@@ -78,7 +78,8 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-    Product.find()
+    Product.find({ userId: req.user._id }) // Only the products owner can modify or delete his products !!!
+        // Product.find()
         // .select('title price -_id')
         // .populate('userId', 'name')
         .then(products => {
