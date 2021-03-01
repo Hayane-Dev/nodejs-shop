@@ -7,6 +7,8 @@ const User = require('../models/user');
 const { log } = require('console');
 const user = require('../models/user');
 
+const { validationResult } = require('express-validator');
+
 const transporter = nodemailer.createTransport(sendgridTransport({
     auth: {
         api_key: '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'
@@ -75,6 +77,15 @@ exports.postLogin = (req, res, next) => {
 
 exports.postSignup = (req, res, next) => {
     const { email, password, confirmPassword } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors.array());
+        return res.status(422).render('auth/signup', {
+            path: '/signup',
+            pageTitle: 'Signup',
+            errorMessage: errors.array()
+        });
+    }
     // Check if the email already exists
     User.findOne({ email: email })
         .then(user_doc => {
