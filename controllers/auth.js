@@ -7,7 +7,7 @@ const User = require('../models/user');
 const { log } = require('console');
 const user = require('../models/user');
 
-const { validationResult } = require('express-validator');
+const { validationResult } = require('express-validator/check');
 
 const transporter = nodemailer.createTransport(sendgridTransport({
     auth: {
@@ -83,7 +83,7 @@ exports.postSignup = (req, res, next) => {
         return res.status(422).render('auth/signup', {
             path: '/signup',
             pageTitle: 'Signup',
-            errorMessage: errors.array()
+            errorMessage: errors.array()[0].msg
         });
     }
     // Check if the email already exists
