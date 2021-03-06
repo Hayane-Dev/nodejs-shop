@@ -54,7 +54,7 @@ app.use((req, res, next) => {
 
 // Instead of adding to each request, it is better to use a middleware
 app.use((req, res, next) => {
-    console.log(req.session.isLoggedIn);
+    // console.log(req.session.isLoggedIn);
     res.locals.isAuthenticated = req.session.isLoggedIn;
     res.locals.csrfToken = req.csrfToken();
     next();
@@ -69,7 +69,9 @@ app.use(errorController.get404);
 mongoose
     .connect(MONGODB_URI)
     .then(() => {
-        app.listen(3000);
+        app.listen(3000, () => {
+            console.log('Server running on http://localhost:3000');
+        });
     })
     .catch(err => {
         console.log(err);

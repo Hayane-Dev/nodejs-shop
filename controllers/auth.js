@@ -78,6 +78,7 @@ exports.postLogin = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
     const { email, password, confirmPassword } = req.body;
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
         console.log(errors.array());
         return res.status(422).render('auth/signup', {
@@ -86,40 +87,29 @@ exports.postSignup = (req, res, next) => {
             errorMessage: errors.array()[0].msg
         });
     }
-    // Check if the email already exists
-    User.findOne({ email: email })
-        .then(user_doc => {
-            if (user_doc) {
-                req.flash('error', 'Email exists aleady, please pick another one.');
-                return res.redirect('/signup');
-            }
 
-            return bcryptjs.hash(password, 12)
-                .then((hashedPassword) => {
-                    const user = new User({
-                        email: email,
-                        password: hashedPassword,
-                        cart: { items: [] }
-                    });
-                    return user.save()
-                })
-                .then(() => {
-                    res.redirect('/login');
-                    // Sending an email to confirm the signup
-                    return transporter.sendMail({
-                        to: email,
-                        from: 'melkorchi80@gmail.com',
-                        subject: 'Inscription',
-                        html: '<h1>Votre inscription s\'est déroulée avec succès !</h1>'
-                    });
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+    bcryptjs.hash(password, 12)
+        .then((hashedPassword) => {
+            const user = new User({
+                email: email,
+                password: hashedPassword,
+                cart: { items: [] }
+            });
+            return user.save()
+        })
+        .then(() => {
+            res.redirect('/login');
+            // Sending an email to confirm the signup
+            return transporter.sendMail({
+                to: email,
+                from: 'melkorchi80@gmail.com',
+                subject: 'Inscription',
+                html: '<h1>Votre inscription s\'est déroulée avec succès !</h1>'
+            });
         })
         .catch(err => {
             console.log(err);
-        })
+        });
 };
 
 exports.postLogout = (req, res, next) => {
