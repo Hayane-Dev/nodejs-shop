@@ -10,7 +10,22 @@ router.get('/login', authController.getLogin);
 
 router.get('/signup', authController.getSignup);
 
-router.post('/login', authController.postLogin);
+router.post(
+    '/login', [
+        check('email')
+        .isEmail()
+        .withMessage('Invalid Email !')
+        .custom((value, { req }) => {
+            return true;
+        }),
+        body('password', 'Invalid password !')
+        .isLength({ min: 5 })
+        .isAlphanumeric()
+        // .withMessage('Invalid password !')
+        .custom((value, { req }) => {
+            return true;
+        })
+    ], authController.postLogin);
 
 router.post(
     '/signup', [
